@@ -9,7 +9,7 @@ analyzer:
   id: "continuity"
   name: "Continuity Analyzer"
   failure_code_namespace: "continuity"
-  failure_code_registry: "https://<analyzer-repo>/raw/main/failure_codes.yaml"
+  failure_code_registry: "https://raw.githubusercontent.com/nutstrut/continuity-analyzer/main/failure_codes.yaml"
 
 severity_definitions:
   critical: "Invariant bypassed entirely. Authority or enforcement property failed without recovery."
