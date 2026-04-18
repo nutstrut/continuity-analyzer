@@ -1,0 +1,218 @@
+schema_version: "0.1"
+version: "0.1"
+
+version_definitions:
+  schema_version: "Version of the failure code registry file format. Increment when registry structure or fields change."
+  version: "Version of the continuity analyzer failure code registry semantics. Increment when code meanings, severity assignments, or predicate-level interpretations change."
+
+analyzer:
+  id: "continuity"
+  name: "Continuity Analyzer"
+  failure_code_namespace: "continuity"
+  failure_code_registry: "https://<analyzer-repo>/raw/main/failure_codes.yaml"
+
+severity_definitions:
+  critical: "Invariant bypassed entirely. Authority or enforcement property failed without recovery."
+  high: "Invariant violated through loosening, substitution, or drift. Requires re-evaluation or explicit remediation."
+  medium: "Ambiguity, missing binding, or uncertainty prevents clean confirmation of invariant survival."
+  low: "Minor or weakly evidenced continuity concern with limited immediate operational impact."
+
+evidence_ref_schemes:
+  analyzer-receipt: "Generic receipt identifier emitted by an analyzer-integrated evidence system."
+  hash: "Content hash or digest reference, typically in the form hash:<algorithm>:<value>."
+  sar: "Settlement Attestation Receipt / SettlementWitness receipt identifier."
+  aps-receipt: "APS receipt or attestation identifier."
+  eth: "Ethereum on-chain reference, typically transaction hash or event-bearing transaction."
+  url: "Dereferenceable URL pointing to an evidence artifact."
+
+deprecated_codes: []
+
+failure_codes:
+  - code: "continuity.object_substitution"
+    predicate: "object_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: high
+    description: "The object reaching mutation differs from the object originally governed."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.object_binding_missing"
+    predicate: "object_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: medium
+    description: "No binding is available between the governed object and the object reaching mutation."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.object_binding_ambiguous"
+    predicate: "object_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: medium
+    description: "Object binding exists but is ambiguous, preventing reliable continuity evaluation."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.object_reference_ambiguous"
+    predicate: "object_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: medium
+    description: "The governed object reference is too ambiguous to determine whether the same object reached mutation."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.constraint_dropped"
+    predicate: "constraint_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: high
+    description: "A governing constraint present at approval is absent at mutation."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.constraint_widened"
+    predicate: "constraint_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: high
+    description: "Constraints were loosened or widened between approval and mutation."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.constraint_translation_ambiguous"
+    predicate: "constraint_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: medium
+    description: "Constraint translation across system boundaries is ambiguous, preventing clean continuity evaluation."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.stale_verdict"
+    predicate: "temporal_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: high
+    description: "The governing decision may no longer have been fresh or valid at mutation time."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+      - "sar:<id>"
+
+  - code: "continuity.execution_drift"
+    predicate: "temporal_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: high
+    description: "Elapsed time or execution-path drift may have invalidated the original decision before mutation."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+      - "sar:<id>"
+
+  - code: "continuity.async_retry_after_drift"
+    predicate: "temporal_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: high
+    description: "An asynchronous retry or replay occurred after conditions may have drifted from the original decision context."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "sar:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.timestamp_missing"
+    predicate: "temporal_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: medium
+    description: "Required timing information is missing, preventing evaluation of decision freshness at mutation time."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.timestamp_ambiguous"
+    predicate: "temporal_continuity"
+    canonical_dimension_refs:
+      - invariant_survival
+    severity: medium
+    description: "Available timing information is ambiguous or contradictory, preventing reliable temporal continuity evaluation."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.authority_shift"
+    predicate: "authority_continuity"
+    canonical_dimension_refs:
+      - refusal_authority
+    severity: high
+    description: "Authority governing the action changed before execution."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+      - "aps-receipt:<id>"
+
+  - code: "continuity.authority_externalized"
+    predicate: "authority_continuity"
+    canonical_dimension_refs:
+      - refusal_authority
+    severity: high
+    description: "Refusal or approval authority moved outside the originally governed control path."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+      - "aps-receipt:<id>"
+
+  - code: "continuity.refusal_authority_ambiguous"
+    predicate: "authority_continuity"
+    canonical_dimension_refs:
+      - refusal_authority
+    severity: medium
+    description: "The system description does not clearly establish where refusal authority resides at execution time."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "hash:<algorithm>:<value>"
+      - "aps-receipt:<id>"
+
+  - code: "continuity.executor_bypass"
+    predicate: "executor_continuity"
+    canonical_dimension_refs:
+      - refusal_authority
+    severity: critical
+    description: "The final mutation-capable executor bypassed the governing condition."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "sar:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.proxy_executor_mismatch"
+    predicate: "executor_continuity"
+    canonical_dimension_refs:
+      - refusal_authority
+    severity: high
+    description: "A proxy or intermediary executor differs from the mutation-capable executor expected to enforce the governing condition."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "sar:<id>"
+      - "hash:<algorithm>:<value>"
+
+  - code: "continuity.executor_enforcement_unverified"
+    predicate: "executor_continuity"
+    canonical_dimension_refs:
+      - refusal_authority
+    severity: medium
+    description: "A mutation-capable executor is present, but there is insufficient evidence that it enforced the governing condition."
+    evidence_refs:
+      - "analyzer-receipt:<id>"
+      - "sar:<id>"
+      - "hash:<algorithm>:<value>"
