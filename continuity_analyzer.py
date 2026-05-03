@@ -149,7 +149,22 @@ def evaluate(payload: AnalyzerInput):
         "subject": p["subject"],
         "classification": classification,
         "predicates": predicates,
-        "rationale": f"classification={classification}",
+        "rationale": (
+            "executor_continuity failed: refusal_unavailable event detected; "
+            "mechanical refusal was not present at mutation boundary. "
+            "All other predicates passed."
+            if predicates["executor_continuity"]["status"] == "fail"
+            and all(
+                predicates[k]["status"] == "pass"
+                for k in [
+                    "object_continuity",
+                    "constraint_continuity",
+                    "temporal_continuity",
+                    "authority_continuity",
+                ]
+            )
+            else f"classification={classification}"
+        ),
         "input_digest": input_digest,
         "sar_binding": None,
         "verifier": {

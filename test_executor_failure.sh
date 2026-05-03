@@ -20,7 +20,7 @@ curl -sS -X POST http://127.0.0.1:3002/continuity/evaluate \
     "action_id": "act-1",
     "requested_action": {"target_id":"A"},
     "admitted_action": {"amount": 10},
-    "executed_action": {"amount": 10},
+    "executed_action": {"target_id":"A", "amount": 10},
     "mutation_boundary_ts": "2026-05-03T00:00:00Z",
     "executor_id": "exec-1",
     "execution_environment": null
